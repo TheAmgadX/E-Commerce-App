@@ -1,17 +1,18 @@
 <x-mail::message>
-#Welcome, {{$name}}!
+# Welcome, {{ $name }}  
 
-Thank you for registering an account with us. We're excited to have you on board.
+We’re glad to have you on board. Your account is now active and ready for use.
 
-You can now browse our products, manage your cart, and place orders.
+<x-mail::panel>
+You can now explore products, manage your cart, track orders, and update your profile seamlessly.
+</x-mail::panel>
 
-Thanks,
-
-<x-mail::button :url="''">
-Button Text
+<x-mail::button :url="config('app.url')">
+Start Browsing
 </x-mail::button>
 
-Thanks,<br>
+If you didn’t register this account, please contact us.
+
+Regards,  
 {{ config('app.name') }}
-</https://www.google.com/search?q=x-mail::message>
 </x-mail::message>
