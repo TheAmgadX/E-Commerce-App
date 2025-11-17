@@ -20,6 +20,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [UserController::class, 'profile']); // get all user data.
     Route::put('/profile', [UserController::class, 'update']);
     Route::put('/profile/password', [UserController::class, 'updatePassword']);
+    Route::delete('/profile', [UserController::class, 'delete']);
 
     // Address
     Route::get('/addresses', [AddressController::class, 'addresses']); // get addresses for specific user.
