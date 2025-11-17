@@ -17,7 +17,6 @@ class AuthController extends Controller
      * Register a new user.
      */
     public function register(Request $request) {
-        // Validate the incoming data
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
@@ -30,7 +29,6 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        // Assign the 'user' role
         $user->assignRole('user');
 
         // Send the Welcome Mail
@@ -41,17 +39,15 @@ class AuthController extends Controller
             \Log::error('Mail sending failed for user: ' . $user->email . ' Error: ' . $e->getMessage());
         }
 
-        // Return a success response
         return response()->json([
             'message' => 'User registered successfully. Please check your email to verify.',
-        ], 201); // 201 : "Created"
+        ], 201);
     }
 
     /**
      * Log in an existing user.
      */
     public function login(Request $request) {
-        // Validate the incoming data
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
@@ -59,13 +55,11 @@ class AuthController extends Controller
 
         // Attempt to authenticate the user
         if (!Auth::attempt($request->only('email', 'password'))) {
-            // If auth fails, return an error
             return response()->json([
                 'message' => 'Invalid login details'
-            ], 401); // 401 means "Unauthorized"
+            ], 401); // 401 : "Unauthorized"
         }
 
-        // Get the authenticated user
         $user = User::where('email', $request['email'])->firstOrFail();
 
         // Create a Sanctum API token
@@ -76,6 +70,19 @@ class AuthController extends Controller
             'message' => 'Login successful',
             'user' => $user,
             'token' => $token
-        ], 200); // 200 : "OK"
+        ], 200);
+    }
+
+    /**
+     * Log out an existing user.
+     */
+    public function logout(Request $request){
+        $user = $request->user();
+        
+        $user->currentAccessToken()->delete();
+
+        return response()->json([
+            'message' => 'Successfully logged out'
+        ], 200);
     }
 }
