@@ -46,7 +46,7 @@ class AuthController extends Controller
      * @OA\Response(
      * response=422,
      * description="Validation Error",
-     * @OA\JsonContent(ref="#/components/schemas/ErrorValidation")
+     * @OA\JsonContent(ref="#/components/schemas/ErrorValidationAuth")
      * )
      * )
      */
@@ -117,7 +117,7 @@ class AuthController extends Controller
      * @OA\Response(
      * response=422,
      * description="Validation Error",
-     * @OA\JsonContent(ref="#/components/schemas/ErrorValidation")
+     * @OA\JsonContent(ref="#/components/schemas/ErrorValidationAuth")
      * )
      * )
      */

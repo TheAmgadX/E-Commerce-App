@@ -6,6 +6,377 @@
         "version": "1.0.0"
     },
     "paths": {
+        "/api/addresses": {
+            "get": {
+                "tags": [
+                    "Address"
+                ],
+                "summary": "Get all addresses for the authenticated user",
+                "operationId": "c79dd3c3c64ec5882c4205cbfe71a5c1",
+                "parameters": [
+                    {
+                        "name": "Accept",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": "application/json"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of user addresses",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "addresses": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Address"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorUnauthorized"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/address": {
+            "post": {
+                "tags": [
+                    "Address"
+                ],
+                "summary": "Create a new address for the authenticated user",
+                "operationId": "7df30e173742564cc94d94e7199e7bd2",
+                "parameters": [
+                    {
+                        "name": "Accept",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": "application/json"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Address details",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "country",
+                                    "city",
+                                    "street",
+                                    "phone_numbers"
+                                ],
+                                "properties": {
+                                    "country": {
+                                        "type": "string",
+                                        "example": "Egypt"
+                                    },
+                                    "city": {
+                                        "type": "string",
+                                        "example": "Giza"
+                                    },
+                                    "street": {
+                                        "type": "string",
+                                        "example": "456 Oak Avenue, Building 10"
+                                    },
+                                    "phone_numbers": {
+                                        "description": "Array of phone number strings",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "example": "+201012345678"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Address created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Address created successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorUnauthorized"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorValidationAddress"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/address/{address}": {
+            "put": {
+                "tags": [
+                    "Address"
+                ],
+                "summary": "Update an existing address for the authenticated user",
+                "operationId": "896da8648439bb541b9f5be395875249",
+                "parameters": [
+                    {
+                        "name": "Accept",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": "application/json"
+                        }
+                    },
+                    {
+                        "name": "address",
+                        "in": "path",
+                        "description": "ID of the address to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Address details (all fields are optional)",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "country": {
+                                        "type": "string",
+                                        "example": "Updated Country",
+                                        "nullable": true
+                                    },
+                                    "city": {
+                                        "type": "string",
+                                        "example": "New Cairo",
+                                        "nullable": true
+                                    },
+                                    "street": {
+                                        "type": "string",
+                                        "example": "789 Pine Road, Floor 5",
+                                        "nullable": true
+                                    },
+                                    "phone_numbers": {
+                                        "description": "Array of phone number strings",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "example": "+201298765432"
+                                        },
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Address updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Address updated successfully"
+                                        },
+                                        "address": {
+                                            "$ref": "#/components/schemas/Address"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorUnauthorized"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden (if the address does not belong to the user)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorForbidden"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorNotFound"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorValidationAddress"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Address"
+                ],
+                "summary": "Delete an address for the authenticated user",
+                "operationId": "4dcf64409b91d398e4b4237a930fd910",
+                "parameters": [
+                    {
+                        "name": "Accept",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": "application/json"
+                        }
+                    },
+                    {
+                        "name": "address",
+                        "in": "path",
+                        "description": "ID of the address to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Address deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Address deleted successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorUnauthorized"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden (if the address does not belong to the user)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorForbidden"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorNotFound"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/register": {
             "post": {
                 "tags": [
@@ -84,7 +455,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ErrorValidation"
+                                    "$ref": "#/components/schemas/ErrorValidationAuth"
                                 }
                             }
                         }
@@ -182,7 +553,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ErrorValidation"
+                                    "$ref": "#/components/schemas/ErrorValidationAuth"
                                 }
                             }
                         }
@@ -380,7 +751,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ErrorValidation"
+                                    "$ref": "#/components/schemas/ErrorValidationUser"
                                 }
                             }
                         }
@@ -529,7 +900,7 @@
                                 "schema": {
                                     "oneOf": [
                                         {
-                                            "$ref": "#/components/schemas/ErrorValidation"
+                                            "$ref": "#/components/schemas/ErrorValidationUser"
                                         },
                                         {
                                             "properties": {
@@ -612,17 +983,16 @@
                         "type": "string",
                         "example": "Cairo"
                     },
-                    "state": {
-                        "type": "string",
-                        "example": "Cairo"
-                    },
-                    "postal_code": {
-                        "type": "string",
-                        "example": "11511"
-                    },
                     "country": {
                         "type": "string",
                         "example": "Egypt"
+                    },
+                    "phone_numbers": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "example": "+201012345678"
+                        }
                     },
                     "created_at": {
                         "type": "string",
@@ -659,6 +1029,138 @@
                                 "items": {
                                     "type": "string",
                                     "example": "The password field is required."
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorValidationAuth": {
+                "title": "Authentication Validation Error",
+                "description": "Validation error response for authentication endpoints (register, login)",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "The given data was invalid."
+                    },
+                    "errors": {
+                        "properties": {
+                            "name": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "example": "The name field is required."
+                                }
+                            },
+                            "email": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "example": "The email has already been taken."
+                                }
+                            },
+                            "password": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "example": "The password must be at least 8 characters."
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorValidationUser": {
+                "title": "User Profile Validation Error",
+                "description": "Validation error response for user profile endpoints (update profile, change password)",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "The given data was invalid."
+                    },
+                    "errors": {
+                        "properties": {
+                            "name": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "example": "The name field must not exceed 255 characters."
+                                }
+                            },
+                            "email": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "example": "The email must be a valid email address."
+                                }
+                            },
+                            "current_password": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "example": "The current password field is required."
+                                }
+                            },
+                            "password": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "example": "The password must be at least 8 characters."
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorValidationAddress": {
+                "title": "Address Validation Error",
+                "description": "Validation error response for address endpoints (create, update address)",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "The given data was invalid."
+                    },
+                    "errors": {
+                        "properties": {
+                            "country": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "example": "The country field is required."
+                                }
+                            },
+                            "city": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "example": "The city field is required."
+                                }
+                            },
+                            "street": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "example": "The street must not exceed 255 characters."
+                                }
+                            },
+                            "phone_numbers": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "example": "The phone numbers field must be an array with at least 1 item."
+                                }
+                            },
+                            "phone_numbers.*": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "example": "Each phone number must not exceed 13 characters."
                                 }
                             }
                         },
@@ -711,6 +1213,10 @@
         }
     },
     "tags": [
+        {
+            "name": "Address",
+            "description": "Address"
+        },
         {
             "name": "Auth",
             "description": "Auth"

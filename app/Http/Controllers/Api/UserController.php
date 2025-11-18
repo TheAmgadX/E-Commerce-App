@@ -85,7 +85,7 @@ class UserController extends Controller
      * @OA\Response(
      * response=422,
      * description="Validation Error",
-     * @OA\JsonContent(ref="#/components/schemas/ErrorValidation")
+     * @OA\JsonContent(ref="#/components/schemas/ErrorValidationUser")
      * )
      * )
      */
@@ -143,7 +143,7 @@ class UserController extends Controller
      * description="Validation Error / Wrong current password",
      * @OA\JsonContent(
      * oneOf={
-     * @OA\Schema(ref="#/components/schemas/ErrorValidation"),
+     * @OA\Schema(ref="#/components/schemas/ErrorValidationUser"),
      * @OA\Schema(
      * @OA\Property(property="message", type="string", example="The provided current password does not match your password.")
      * )

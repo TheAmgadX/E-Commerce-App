@@ -41,9 +41,10 @@ namespace App\Http\Controllers;
  * @OA\Property(property="user_id", type="integer", example=5),
  * @OA\Property(property="street", type="string", example="123 Example Street"),
  * @OA\Property(property="city", type="string", example="Cairo"),
- * @OA\Property(property="state", type="string", example="Cairo"),
- * @OA\Property(property="postal_code", type="string", example="11511"),
  * @OA\Property(property="country", type="string", example="Egypt"),
+ * @OA\Property(property="phone_numbers", type="array",
+ * @OA\Items(type="string", example="+201012345678")
+ * ),
  * @OA\Property(property="created_at", type="string", format="date-time", example="2023-11-17T12:00:00.000000Z"),
  * @OA\Property(property="updated_at", type="string", format="date-time", example="2023-11-17T12:00:00.000000Z")
  * )
@@ -56,6 +57,45 @@ namespace App\Http\Controllers;
  * @OA\Property(property="errors", type="object",
  * @OA\Property(property="email", type="array", @OA\Items(type="string", example="The email has already been taken.")),
  * @OA\Property(property="password", type="array", @OA\Items(type="string", example="The password field is required."))
+ * )
+ * )
+ *
+ * @OA\Schema(
+ * schema="ErrorValidationAuth",
+ * title="Authentication Validation Error",
+ * description="Validation error response for authentication endpoints (register, login)",
+ * @OA\Property(property="message", type="string", example="The given data was invalid."),
+ * @OA\Property(property="errors", type="object",
+ * @OA\Property(property="name", type="array", @OA\Items(type="string", example="The name field is required.")),
+ * @OA\Property(property="email", type="array", @OA\Items(type="string", example="The email has already been taken.")),
+ * @OA\Property(property="password", type="array", @OA\Items(type="string", example="The password must be at least 8 characters."))
+ * )
+ * )
+ *
+ * @OA\Schema(
+ * schema="ErrorValidationUser",
+ * title="User Profile Validation Error",
+ * description="Validation error response for user profile endpoints (update profile, change password)",
+ * @OA\Property(property="message", type="string", example="The given data was invalid."),
+ * @OA\Property(property="errors", type="object",
+ * @OA\Property(property="name", type="array", @OA\Items(type="string", example="The name field must not exceed 255 characters.")),
+ * @OA\Property(property="email", type="array", @OA\Items(type="string", example="The email must be a valid email address.")),
+ * @OA\Property(property="current_password", type="array", @OA\Items(type="string", example="The current password field is required.")),
+ * @OA\Property(property="password", type="array", @OA\Items(type="string", example="The password must be at least 8 characters."))
+ * )
+ * )
+ *
+ * @OA\Schema(
+ * schema="ErrorValidationAddress",
+ * title="Address Validation Error",
+ * description="Validation error response for address endpoints (create, update address)",
+ * @OA\Property(property="message", type="string", example="The given data was invalid."),
+ * @OA\Property(property="errors", type="object",
+ * @OA\Property(property="country", type="array", @OA\Items(type="string", example="The country field is required.")),
+ * @OA\Property(property="city", type="array", @OA\Items(type="string", example="The city field is required.")),
+ * @OA\Property(property="street", type="array", @OA\Items(type="string", example="The street must not exceed 255 characters.")),
+ * @OA\Property(property="phone_numbers", type="array", @OA\Items(type="string", example="The phone numbers field must be an array with at least 1 item.")),
+ * @OA\Property(property="phone_numbers.*", type="array", @OA\Items(type="string", example="Each phone number must not exceed 13 characters."))
  * )
  * )
  *
