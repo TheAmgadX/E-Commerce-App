@@ -11,7 +11,35 @@ use App\Models\User;
 class UserController extends Controller
 {
     /**
-     * Get the authenticated user's profile.
+     * @OA\Get(
+     * path="/api/profile",
+     * summary="Get authenticated user's profile and addresses",
+     * tags={"User"},
+     * security={{"bearerAuth": {}}},
+     * @OA\Parameter(
+     * name="Accept",
+     * in="header",
+     * required=true,
+     * @OA\Schema(type="string", default="application/json")
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="User profile data with loaded addresses",
+     * @OA\JsonContent(
+     * @OA\Property(property="user", type="object",
+     * @OA\Property(property="id", type="integer", example=1),
+     * @OA\Property(property="name", type="string", example="Amgad Mohamed"),
+     * @OA\Property(property="email", type="string", format="email", example="amgad@example.com"),
+     * @OA\Property(property="addresses", type="array", @OA\Items(ref="#/components/schemas/Address"))
+     * )
+     * )
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthorized",
+     * @OA\JsonContent(ref="#/components/schemas/ErrorUnauthorized")
+     * )
+     * )
      */
     public function profile(Request $request) {
         $user = $request->user();
@@ -24,7 +52,42 @@ class UserController extends Controller
     }
 
     /**
-     * Update the authenticated user's profile (name & email).
+     * @OA\Put(
+     * path="/api/profile",
+     * summary="Update authenticated user's profile (name and/or email).",
+     * tags={"User"},
+     * security={{"bearerAuth": {}}},
+     * @OA\Parameter(
+     * name="Accept",
+     * in="header",
+     * required=true,
+     * @OA\Schema(type="string", default="application/json")
+     * ),
+     * @OA\RequestBody(
+     * description="User data to update (fields are optional)",
+     * @OA\JsonContent(
+     * @OA\Property(property="name", type="string", example="Amgad (Updated)", nullable=true),
+     * @OA\Property(property="email", type="string", format="email", example="new-email@example.com", nullable=true)
+     * )
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Profile updated successfully",
+     * @OA\JsonContent(
+     * @OA\Property(property="message", type="string", example="Profile updated successfully"),
+     * )
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthorized",
+     * @OA\JsonContent(ref="#/components/schemas/ErrorUnauthorized")
+     * ),
+     * @OA\Response(
+     * response=422,
+     * description="Validation Error",
+     * @OA\JsonContent(ref="#/components/schemas/ErrorValidation")
+     * )
+     * )
      */
     public function update(Request $request){
         $user = $request->user();
@@ -42,7 +105,52 @@ class UserController extends Controller
     }
 
     /**
-     * Update the authenticated user's password.
+     * @OA\Put(
+     * path="/api/profile/password",
+     * summary="Update the authenticated user's password",
+     * tags={"User"},
+     * security={{"bearerAuth": {}}},
+     * @OA\Parameter(
+     * name="Accept",
+     * in="header",
+     * required=true,
+     * @OA\Schema(type="string", default="application/json")
+     * ),
+     * @OA\RequestBody(
+     * required=true,
+     * description="Password change details",
+     * @OA\JsonContent(
+     * required={"current_password","password","password_confirmation"},
+     * @OA\Property(property="current_password", type="string", format="password", example="OldPassword123"),
+     * @OA\Property(property="password", type="string", format="password", example="NewPassword789"),
+     * @OA\Property(property="password_confirmation", type="string", format="password", example="NewPassword789")
+     * )
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Password updated successfully",
+     * @OA\JsonContent(
+     * @OA\Property(property="message", type="string", example="Password updated successfully")
+     * )
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthorized",
+     * @OA\JsonContent(ref="#/components/schemas/ErrorUnauthorized")
+     * ),
+     * @OA\Response(
+     * response=422,
+     * description="Validation Error / Wrong current password",
+     * @OA\JsonContent(
+     * oneOf={
+     * @OA\Schema(ref="#/components/schemas/ErrorValidation"),
+     * @OA\Schema(
+     * @OA\Property(property="message", type="string", example="The provided current password does not match your password.")
+     * )
+     * }
+     * )
+     * )
+     * )
      */
     public function updatePassword(Request $request) {
         $user = $request->user();
@@ -70,7 +178,30 @@ class UserController extends Controller
     }
 
     /**
-     * Delete the user account and its tokens.
+     * @OA\Delete(
+     * path="/api/profile",
+     * summary="Delete the authenticated user's account and all associated tokens",
+     * tags={"User"},
+     * security={{"bearerAuth": {}}},
+     * @OA\Parameter(
+     * name="Accept",
+     * in="header",
+     * required=true,
+     * @OA\Schema(type="string", default="application/json")
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Account deleted successfully",
+     * @OA\JsonContent(
+     * @OA\Property(property="message", type="string", example="Account deleted successfully.")
+     * )
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Unauthorized",
+     * @OA\JsonContent(ref="#/components/schemas/ErrorUnauthorized")
+     * )
+     * )
      */
     public function delete(Request $request){
         $user = $request->user();

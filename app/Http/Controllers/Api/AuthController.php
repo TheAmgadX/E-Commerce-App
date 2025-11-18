@@ -13,8 +13,42 @@ use App\Mail\WelcomeMail;
 
 class AuthController extends Controller
 {
+
     /**
-     * Register a new user.
+     * @OA\Post(
+     * path="/api/register",
+     * summary="Register a new user account",
+     * tags={"Auth"},
+     * @OA\Parameter(
+     * name="Accept",
+     * in="header",
+     * required=true,
+     * @OA\Schema(type="string", default="application/json")
+     * ),
+     * @OA\RequestBody(
+     * required=true,
+     * description="User registration details",
+     * @OA\JsonContent(
+     * required={"name","email","password","password_confirmation"},
+     * @OA\Property(property="name", type="string", example="Amgad Mohamed"),
+     * @OA\Property(property="email", type="string", format="email", example="amgad@example.com"),
+     * @OA\Property(property="password", type="string", format="password", example="Secret12345"),
+     * @OA\Property(property="password_confirmation", type="string", format="password", example="Secret12345")
+     * )
+     * ),
+     * @OA\Response(
+     * response=201,
+     * description="User registered successfully",
+     * @OA\JsonContent(
+     * @OA\Property(property="message", type="string", example="User registered successfully. Please check your email to verify.")
+     * )
+     * ),
+     * @OA\Response(
+     * response=422,
+     * description="Validation Error",
+     * @OA\JsonContent(ref="#/components/schemas/ErrorValidation")
+     * )
+     * )
      */
     public function register(Request $request) {
         $request->validate([
@@ -45,7 +79,47 @@ class AuthController extends Controller
     }
 
     /**
-     * Log in an existing user.
+     * @OA\Post(
+     * path="/api/login",
+     * summary="Log in an existing user and receive a Sanctum token",
+     * tags={"Auth"},
+     * @OA\Parameter(
+     * name="Accept",
+     * in="header",
+     * required=true,
+     * @OA\Schema(type="string", default="application/json")
+     * ),
+     * @OA\RequestBody(
+     * required=true,
+     * description="User credentials",
+     * @OA\JsonContent(
+     * required={"email","password"},
+     * @OA\Property(property="email", type="string", format="email", example="amgad@example.com"),
+     * @OA\Property(property="password", type="string", format="password", example="Secret12345")
+     * )
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Login successful",
+     * @OA\JsonContent(
+     * @OA\Property(property="message", type="string", example="Login successful"),
+     * @OA\Property(property="user", ref="#/components/schemas/User"),
+     * @OA\Property(property="token", type="string", example="1|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+     * )
+     * ),
+     * @OA\Response(
+     * response=401,
+     * description="Invalid login details",
+     * @OA\JsonContent(
+     * @OA\Property(property="message", type="string", example="Invalid login details")
+     * )
+     * ),
+     * @OA\Response(
+     * response=422,
+     * description="Validation Error",
+     * @OA\JsonContent(ref="#/components/schemas/ErrorValidation")
+     * )
+     * )
      */
     public function login(Request $request) {
         $request->validate([
@@ -74,7 +148,26 @@ class AuthController extends Controller
     }
 
     /**
-     * Log out an existing user.
+     * @OA\Post(
+     * path="/api/logout",
+     * summary="Log out user and invalidate the current token",
+     * tags={"Auth"},
+     * security={{"bearerAuth":{}}},
+     * @OA\Parameter(
+     * name="Accept",
+     * in="header",
+     * required=true,
+     * @OA\Schema(type="string", default="application/json")
+     * ),
+     * @OA\Response(
+     * response=200, 
+     * description="Successfully logged out",
+     * @OA\JsonContent(
+     * @OA\Property(property="message", type="string", example="Successfully logged out")
+     * )
+     * ),
+     * @OA\Response(response=401, description="Unauthenticated / Missing Token")
+     * )
      */
     public function logout(Request $request){
         $user = $request->user();
