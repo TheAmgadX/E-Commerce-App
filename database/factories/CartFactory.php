@@ -3,12 +3,12 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Models\Product;
+use App\Models\User;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ProductImage>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Cart>
  */
-class ProductImageFactory extends Factory
+class CartFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -18,8 +18,7 @@ class ProductImageFactory extends Factory
     public function definition(): array
     {
         return [
-            'product_id' => Product::factory(),
-            'image_url' => fake()->imageUrl(),
+            'user_id' => null,
         ];
     }
 }

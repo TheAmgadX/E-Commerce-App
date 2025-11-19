@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\ProductImage;
 
 class ProductSeeder extends Seeder
 {
@@ -12,6 +13,6 @@ class ProductSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        ProductImage::factory(10)->create(); // this will ceate product and images for them.
     }
 }

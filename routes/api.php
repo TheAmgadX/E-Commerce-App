@@ -35,6 +35,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/address/{address}', [AddressController::class, 'update']);
     Route::delete('/address/{address}', [AddressController::class, 'delete']);
 
+
+    // Cart Products
+    Route::get('/cart', [CartController::class, 'cartProducts']);
+    Route::post('/cart', [CartController::class, 'addProduct']);
+    Route::put('/cart', [CartController::class, 'updateProductCount']);
+    Route::delete('/cart', [CartController::class, 'deleteProduct']);
+
     // Orders (We will build the controller in Phase 4)
     // Route::get('/orders', [OrderController::class, 'index']);
 });
