@@ -5,12 +5,18 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\AddressController;
+use App\Http\Controllers\Api\CategoryController;
 
 // Public API routes
+
+// Auth Routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/forget-password', [AuthController::class, 'forgetPassword']);
 Route::post('/check-otp', [AuthController::class, 'checkOTP']);
+
+// categories routes
+Route::get('/categories', [CategoryController::class, 'categories']);
 
 Route::middleware('auth:sanctum')->group(function () {
     // Auth
