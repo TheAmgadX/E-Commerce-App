@@ -178,6 +178,47 @@ class UserController extends Controller
     }
 
     /**
+     * @OA\Put(
+     * path="/api/reset-password",
+     * summary="Reset password for authenticated user (without old password)",
+     * tags={"User"},
+     * security={{"bearerAuth": {}}},
+     * @OA\RequestBody(
+     * required=true,
+     * description="New password details",
+     * @OA\JsonContent(
+     * required={"password","password_confirmation"},
+     * @OA\Property(property="password", type="string", format="password", example="NewPassword789"),
+     * @OA\Property(property="password_confirmation", type="string", format="password", example="NewPassword789")
+     * )
+     * ),
+     * @OA\Response(
+     * response=200,
+     * description="Password reset successfully",
+     * @OA\JsonContent(
+     * @OA\Property(property="message", type="string", example="Password reset successfully")
+     * )
+     * ),
+     * @OA\Response(response=401, description="Unauthorized"),
+     * @OA\Response(response=422, description="Validation Error")
+     * )
+     */
+    public function resetPassword(Request $request) {
+        $user = $request->user();
+
+        $request->validate([
+            'password' => ['required', 'confirmed', Password::defaults()],
+        ]);
+
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return response()->json([
+            'message' => 'Password reset successfully'
+        ], 200);
+    }
+
+    /**
      * @OA\Delete(
      * path="/api/profile",
      * summary="Delete the authenticated user's account and all associated tokens",
