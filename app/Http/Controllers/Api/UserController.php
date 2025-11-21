@@ -52,7 +52,7 @@ class UserController extends Controller
     }
 
     /**
-     * @OA\Put(
+     * @OA\Patch(
      * path="/api/profile",
      * summary="Update authenticated user's profile (name and/or email).",
      * tags={"User"},
@@ -103,7 +103,7 @@ class UserController extends Controller
     }
 
     /**
-     * @OA\Put(
+     * @OA\Patch(
      * path="/api/profile/password",
      * summary="Update the authenticated user's password",
      * tags={"User"},
@@ -174,7 +174,7 @@ class UserController extends Controller
     }
 
     /**
-     * @OA\Put(
+     * @OA\Patch(
      * path="/api/reset-password",
      * summary="Reset password for authenticated user (without old password)",
      * tags={"User"},

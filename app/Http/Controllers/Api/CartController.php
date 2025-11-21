@@ -148,7 +148,7 @@ class CartController extends Controller
     }
 
     /**
-     * @OA\Put(
+     * @OA\Patch(
      * path="/api/cart",
      * summary="Update product quantity in the cart",
      * tags={"Cart"},

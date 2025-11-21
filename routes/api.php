@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\AddressController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\OrderController;
 
 // Public API routes
 
@@ -20,35 +21,38 @@ Route::post('/check-otp', [AuthController::class, 'checkOTP']);
 // Product Endpoints    
 Route::get('/products', [ProductController::class, 'products']);
 
-// categories routes
+// Categories Routes
 Route::get('/categories', [CategoryController::class, 'categories']);
 
 Route::middleware('auth:sanctum')->group(function () {
     // Auth
     Route::post('/logout', [AuthController::class, 'logout']);
-    
+    Route::patch('/reset-password', [UserController::class, 'resetPassword']);
+
     // User Profile
-    Route::get('/profile', [UserController::class, 'profile']); // get all user data.
-    Route::put('/profile', [UserController::class, 'update']);
-    Route::put('/profile/password', [UserController::class, 'updatePassword']);
+    Route::get('/profile', [UserController::class, 'profile']);
+    Route::patch('/profile', [UserController::class, 'update']);
+    Route::patch('/profile/password', [UserController::class, 'updatePassword']);
     Route::delete('/profile', [UserController::class, 'delete']);
-    Route::put('reset-password', [UserController::class, 'resetPassword']);
     
-    // Address
-    Route::get('/addresses', [AddressController::class, 'addresses']); // get addresses for specific user.
-    Route::post('/address', [AddressController::class, 'create']);
-    Route::put('/address/{address}', [AddressController::class, 'update']);
-    Route::delete('/address/{address}', [AddressController::class, 'delete']);
+    // Addresses
+    Route::get('/addresses', [AddressController::class, 'addresses']);
+    Route::post('/addresses', [AddressController::class, 'create']);
+    Route::patch('/addresses/{address}', [AddressController::class, 'update']);
+    Route::delete('/addresses/{address}', [AddressController::class, 'delete']);
 
-
-    // Cart Products
+    // Cart
     Route::get('/cart', [CartController::class, 'cartProducts']);
     Route::post('/cart', [CartController::class, 'addProduct']);
-    Route::put('/cart', [CartController::class, 'updateProductCount']);
+    Route::patch('/cart', [CartController::class, 'updateProductCount']);
     Route::delete('/cart', [CartController::class, 'deleteProduct']);
 
-
-
-    // Orders (We will build the controller in Phase 4)
-    // Route::get('/orders', [OrderController::class, 'index']);
+    // Orders 
+    Route::get('/orders', [OrderController::class, 'getOrders']);
+    Route::post('/orders', [OrderController::class, 'createOrder']);
+    Route::delete('/orders/{order}', [OrderController::class, 'cancelOrder']);
+    
+    // Order Products
+    Route::patch('/orders/{order}/products', [OrderController::class, 'updateProductQuantity']);
+    Route::delete('/orders/{order}/products', [OrderController::class, 'removeProduct']);
 });

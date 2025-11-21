@@ -50,6 +50,72 @@ namespace App\Http\Controllers;
  * )
  *
  * @OA\Schema(
+ * schema="ProductImage",
+ * title="Product Image",
+ * description="Product Image model representation",
+ * @OA\Property(property="id", type="integer", example=1),
+ * @OA\Property(property="product_id", type="integer", example=10),
+ * @OA\Property(property="image_url", type="string", example="https://example.com/images/product1.jpg"),
+ * @OA\Property(property="created_at", type="string", format="date-time", example="2023-11-17T12:00:00.000000Z"),
+ * @OA\Property(property="updated_at", type="string", format="date-time", example="2023-11-17T12:00:00.000000Z")
+ * )
+ *
+ * @OA\Schema(
+ * schema="Product",
+ * title="Product",
+ * description="Product model representation",
+ * @OA\Property(property="id", type="integer", example=10),
+ * @OA\Property(property="name", type="string", example="Wireless Headphones"),
+ * @OA\Property(property="description", type="string", example="High quality wireless headphones with noise cancellation."),
+ * @OA\Property(property="price", type="number", format="float", example=99.99),
+ * @OA\Property(property="stock_quantity", type="integer", example=50),
+ * @OA\Property(property="metric", type="string", example="unit"),
+ * @OA\Property(property="created_at", type="string", format="date-time", example="2023-11-17T12:00:00.000000Z"),
+ * @OA\Property(property="updated_at", type="string", format="date-time", example="2023-11-17T12:00:00.000000Z"),
+ * @OA\Property(property="deleted_at", type="string", format="date-time", nullable=true, example=null),
+ * @OA\Property(property="images", type="array", @OA\Items(ref="#/components/schemas/ProductImage"))
+ * )
+ *
+ * @OA\Schema(
+ * schema="CartItem",
+ * title="Cart Item",
+ * description="Cart Item model representation",
+ * @OA\Property(property="id", type="integer", example=1),
+ * @OA\Property(property="cart_id", type="integer", example=5),
+ * @OA\Property(property="product_id", type="integer", example=10),
+ * @OA\Property(property="quantity", type="integer", example=2),
+ * @OA\Property(property="product", ref="#/components/schemas/Product")
+ * )
+ *
+ * @OA\Schema(
+ * schema="OrderItem",
+ * title="Order Item",
+ * description="Order Item model representation",
+ * @OA\Property(property="order_id", type="integer", example=1),
+ * @OA\Property(property="product_id", type="integer", example=10),
+ * @OA\Property(property="quantity", type="integer", example=2),
+ * @OA\Property(property="created_at", type="string", format="date-time", example="2023-11-17T12:00:00.000000Z"),
+ * @OA\Property(property="updated_at", type="string", format="date-time", example="2023-11-17T12:00:00.000000Z"),
+ * @OA\Property(property="product", ref="#/components/schemas/Product")
+ * )
+ *
+ * @OA\Schema(
+ * schema="Order",
+ * title="Order",
+ * description="Order model representation",
+ * @OA\Property(property="id", type="integer", example=1),
+ * @OA\Property(property="user_id", type="integer", example=5),
+ * @OA\Property(property="address_id", type="integer", example=1),
+ * @OA\Property(property="total_amount", type="number", format="float", example=299.97),
+ * @OA\Property(property="status", type="string", enum={"pending", "processing", "shipped", "delivered", "cancelled", "terminated", "returned"}, example="pending"),
+ * @OA\Property(property="created_at", type="string", format="date-time", example="2023-11-17T12:00:00.000000Z"),
+ * @OA\Property(property="updated_at", type="string", format="date-time", example="2023-11-17T12:00:00.000000Z"),
+ * @OA\Property(property="deleted_at", type="string", format="date-time", nullable=true, example=null),
+ * @OA\Property(property="address", ref="#/components/schemas/Address"),
+ * @OA\Property(property="items", type="array", @OA\Items(ref="#/components/schemas/OrderItem"))
+ * )
+ *
+ * @OA\Schema(
  * schema="ErrorValidation",
  * title="Validation Error",
  * description="Standard response for 422 Unprocessable Entity due to validation failures",
@@ -100,6 +166,27 @@ namespace App\Http\Controllers;
  * )
  *
  * @OA\Schema(
+ * schema="ErrorValidationCart",
+ * title="Cart Validation Error",
+ * description="Validation errors for Cart Operations",
+ * @OA\Property(property="message", type="string", example="The given data was invalid."),
+ * @OA\Property(property="errors", type="object",
+ * @OA\Property(property="product_id", type="array", @OA\Items(type="string", example="The selected product id is invalid.")),
+ * @OA\Property(property="quantity", type="array", @OA\Items(type="string", example="The quantity must be at least 1."))
+ * )
+ * )
+ *
+ * @OA\Schema(
+ * schema="ErrorValidationOrder",
+ * title="Order Validation Error",
+ * description="Validation errors for Order Operations",
+ * @OA\Property(property="message", type="string", example="The given data was invalid."),
+ * @OA\Property(property="errors", type="object",
+ * @OA\Property(property="address_id", type="array", @OA\Items(type="string", example="The selected address id is invalid."))
+ * )
+ * )
+ *
+ * @OA\Schema(
  * schema="ErrorUnauthorized",
  * title="Unauthorized",
  * description="Standard response for 401 Unauthorized",
@@ -119,6 +206,7 @@ namespace App\Http\Controllers;
  * description="Standard response for 404 Not Found",
  * @OA\Property(property="message", type="string", example="No query results for model [App\\Models\\ModelName] ID.")
  * )
+ *
  * @OA\Schema(
  * schema="Category",
  * title="Category",
@@ -129,55 +217,6 @@ namespace App\Http\Controllers;
  * @OA\Property(property="created_at", type="string", format="date-time", example="2023-11-17T12:00:00.000000Z"),
  * @OA\Property(property="updated_at", type="string", format="date-time", example="2023-11-17T12:00:00.000000Z"),
  * @OA\Property(property="deleted_at", type="string", format="date-time", nullable=true, example=null)
- * )
- *
- * @OA\Schema(
- * schema="ProductImage",
- * title="Product Image",
- * description="Product Image model representation",
- * @OA\Property(property="id", type="integer", example=1),
- * @OA\Property(property="product_id", type="integer", example=10),
- * @OA\Property(property="image_url", type="string", example="https://example.com/images/product1.jpg"),
- * @OA\Property(property="created_at", type="string", format="date-time", example="2023-11-17T12:00:00.000000Z"),
- * @OA\Property(property="updated_at", type="string", format="date-time", example="2023-11-17T12:00:00.000000Z")
- * )
- *
- * @OA\Schema(
- * schema="Product",
- * title="Product",
- * description="Product model representation",
- * @OA\Property(property="id", type="integer", example=10),
- * @OA\Property(property="name", type="string", example="Wireless Headphones"),
- * @OA\Property(property="description", type="string", example="High quality wireless headphones with noise cancellation."),
- * @OA\Property(property="price", type="number", format="float", example=99.99),
- * @OA\Property(property="stock_quantity", type="integer", example=50),
- * @OA\Property(property="metric", type="string", example="unit"),
- * @OA\Property(property="created_at", type="string", format="date-time", example="2023-11-17T12:00:00.000000Z"),
- * @OA\Property(property="updated_at", type="string", format="date-time", example="2023-11-17T12:00:00.000000Z"),
- * @OA\Property(property="deleted_at", type="string", format="date-time", nullable=true, example=null),
- * @OA\Property(property="images", type="array", @OA\Items(ref="#/components/schemas/ProductImage"))
- * )
- *
- * @OA\Schema(
- * schema="CartItem",
- * title="Cart Item",
- * description="Cart Item model representation",
- * @OA\Property(property="id", type="integer", example=1),
- * @OA\Property(property="cart_id", type="integer", example=5),
- * @OA\Property(property="product_id", type="integer", example=10),
- * @OA\Property(property="quantity", type="integer", example=2),
- * @OA\Property(property="product", ref="#/components/schemas/Product")
- * )
- *
- * @OA\Schema(
- * schema="ErrorValidationCart",
- * title="Cart Validation Error",
- * description="Validation error response for cart endpoints",
- * @OA\Property(property="message", type="string", example="The given data was invalid."),
- * @OA\Property(property="errors", type="object",
- * @OA\Property(property="product_id", type="array", @OA\Items(type="string", example="The selected product_id is invalid.")),
- * @OA\Property(property="quantity", type="array", @OA\Items(type="string", example="The quantity must be at least 1."))
- * )
  * )
  *
  * @OA\Schema(

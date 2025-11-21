@@ -108,7 +108,7 @@ class AddressController extends Controller
     }
 
     /**
-     * @OA\Put(
+     * @OA\Patch(
      * path="/api/address/{address}",
      * summary="Update an existing address for the authenticated user",
      * tags={"Address"},
