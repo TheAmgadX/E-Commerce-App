@@ -1182,6 +1182,87 @@
                 }
             }
         },
+        "/api/products": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Filter and list products",
+                "description": "Retrieve products based on optional filters provided in the JSON body.",
+                "operationId": "dc0ad2c037847a2648d7ceac7c98ac3a",
+                "parameters": [
+                    {
+                        "name": "Accept",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": "application/json"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Optional filter criteria",
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "category_ids": {
+                                        "description": "Array of category IDs to filter by",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer",
+                                            "example": 1
+                                        }
+                                    },
+                                    "min_price": {
+                                        "description": "Minimum price",
+                                        "type": "number",
+                                        "example": 100
+                                    },
+                                    "max_price": {
+                                        "description": "Maximum price",
+                                        "type": "number",
+                                        "example": 1000
+                                    },
+                                    "search": {
+                                        "description": "Search term for name or description",
+                                        "type": "string",
+                                        "example": "Headphones"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Products retrieved successfully"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Product"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/profile": {
             "get": {
                 "tags": [
@@ -2447,6 +2528,10 @@
         {
             "name": "Category",
             "description": "Category"
+        },
+        {
+            "name": "Products",
+            "description": "Products"
         },
         {
             "name": "User",
