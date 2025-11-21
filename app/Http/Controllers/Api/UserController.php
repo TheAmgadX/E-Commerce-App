@@ -73,9 +73,7 @@ class UserController extends Controller
      * @OA\Response(
      * response=200,
      * description="Profile updated successfully",
-     * @OA\JsonContent(
-     * @OA\Property(property="message", type="string", example="Profile updated successfully"),
-     * )
+     * @OA\JsonContent(ref="#/components/schemas/SuccessUpdated")
      * ),
      * @OA\Response(
      * response=401,
@@ -129,9 +127,7 @@ class UserController extends Controller
      * @OA\Response(
      * response=200,
      * description="Password updated successfully",
-     * @OA\JsonContent(
-     * @OA\Property(property="message", type="string", example="Password updated successfully")
-     * )
+     * @OA\JsonContent(ref="#/components/schemas/SuccessUpdated")
      * ),
      * @OA\Response(
      * response=401,
@@ -195,12 +191,18 @@ class UserController extends Controller
      * @OA\Response(
      * response=200,
      * description="Password reset successfully",
-     * @OA\JsonContent(
-     * @OA\Property(property="message", type="string", example="Password reset successfully")
-     * )
+     * @OA\JsonContent(ref="#/components/schemas/SuccessMessage")
      * ),
-     * @OA\Response(response=401, description="Unauthorized"),
-     * @OA\Response(response=422, description="Validation Error")
+     * @OA\Response(
+     * response=401,
+     * description="Unauthorized",
+     * @OA\JsonContent(ref="#/components/schemas/ErrorUnauthorized")
+     * ),
+     * @OA\Response(
+     * response=422,
+     * description="Validation Error",
+     * @OA\JsonContent(ref="#/components/schemas/ErrorValidationUser")
+     * )
      * )
      */
     public function resetPassword(Request $request) {
@@ -233,9 +235,7 @@ class UserController extends Controller
      * @OA\Response(
      * response=200,
      * description="Account deleted successfully",
-     * @OA\JsonContent(
-     * @OA\Property(property="message", type="string", example="Account deleted successfully.")
-     * )
+     * @OA\JsonContent(ref="#/components/schemas/SuccessMessage")
      * ),
      * @OA\Response(
      * response=401,

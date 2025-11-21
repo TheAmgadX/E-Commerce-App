@@ -2,7 +2,7 @@
     "openapi": "3.0.0",
     "info": {
         "title": "E-Commerce API Documentation",
-        "description": "API endpoints for the Graduation Project",
+        "description": "API endpoints for the E-Commerce Application",
         "version": "1.0.0"
     },
     "paths": {
@@ -124,13 +124,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Address created successfully"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/SuccessCreated"
                                 }
                             }
                         }
@@ -234,16 +228,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Address updated successfully"
-                                        },
-                                        "address": {
-                                            "$ref": "#/components/schemas/Address"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/SuccessUpdated"
                                 }
                             }
                         }
@@ -259,11 +244,17 @@
                         }
                     },
                     "403": {
-                        "description": "Forbidden (if the address does not belong to the user)",
+                        "description": "Forbidden - You do not have permission to update this address",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ErrorForbidden"
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "You do not have permission to update this address."
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
@@ -328,13 +319,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Address deleted successfully"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/SuccessDeleted"
                                 }
                             }
                         }
@@ -350,11 +335,17 @@
                         }
                     },
                     "403": {
-                        "description": "Forbidden (if the address does not belong to the user)",
+                        "description": "Forbidden - You do not have permission to delete this address",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ErrorForbidden"
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "You do not have permission to delete this address."
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
@@ -585,19 +576,20 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Successfully logged out"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/SuccessMessage"
                                 }
                             }
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated / Missing Token"
+                        "description": "Unauthenticated / Missing Token",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorUnauthorized"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -653,7 +645,30 @@
                         }
                     },
                     "404": {
-                        "description": "User not found"
+                        "description": "User not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorNotFound"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error (Mail Sending Failed)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Failed to send OTP. Please try again later."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -713,7 +728,456 @@
                         }
                     },
                     "400": {
-                        "description": "Invalid or Expired OTP"
+                        "description": "Invalid or Expired OTP",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorBadRequest"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/cart": {
+            "get": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Get authenticated user's cart products",
+                "operationId": "cbeb498937ba9e970849c1d214615a08",
+                "parameters": [
+                    {
+                        "name": "Accept",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": "application/json"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "title": "Populated Cart Response",
+                                            "properties": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/CartItem"
+                                                    }
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Cart products retrieved successfully"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "title": "Empty Cart Response",
+                                            "properties": {
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Cart is empty"
+                                                },
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {},
+                                                    "example": []
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized (Invalid Token)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorUnauthorized"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Update product quantity in the cart",
+                "operationId": "d19106b3ce5434910117a4d89816aa44",
+                "parameters": [
+                    {
+                        "name": "Accept",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": "application/json"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Product quantity update",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "product_id",
+                                    "quantity"
+                                ],
+                                "properties": {
+                                    "product_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "quantity": {
+                                        "type": "integer",
+                                        "example": 3
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cart updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cart updated successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorUnauthorized"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Cart or Product not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorNotFound"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorValidationCart"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error (Update Failed)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cart update failed"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Add a product to the cart",
+                "operationId": "a20c5127ef028ce43b9266cda28cfc62",
+                "parameters": [
+                    {
+                        "name": "Accept",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": "application/json"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Product to add to cart",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "product_id",
+                                    "quantity"
+                                ],
+                                "properties": {
+                                    "product_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "quantity": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Product added to cart successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Product added to cart successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorUnauthorized"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorValidationCart"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Remove a product from the cart",
+                "operationId": "225920ad0a0cf734f3c39e009cf71e35",
+                "parameters": [
+                    {
+                        "name": "Accept",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": "application/json"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Product to remove",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "product_id"
+                                ],
+                                "properties": {
+                                    "product_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Product deleted from cart successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Product deleted from cart successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorUnauthorized"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Cart or Product not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorNotFound"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "product_id": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The selected product_id is invalid."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error (Deletion Failed)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Product deletion failed"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/categories": {
+            "get": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Get all product categories",
+                "operationId": "0ecf24f22584b52fe289784dd7d1ec5b",
+                "parameters": [
+                    {
+                        "name": "Accept",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": "application/json"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of categories",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "categories": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Category"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -836,13 +1300,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Profile updated successfully"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/SuccessUpdated"
                                 }
                             }
                         }
@@ -897,13 +1355,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Account deleted successfully."
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/SuccessMessage"
                                 }
                             }
                         }
@@ -983,13 +1435,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Password updated successfully"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/SuccessUpdated"
                                 }
                             }
                         }
@@ -1075,22 +1521,30 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Password reset successfully"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/SuccessMessage"
                                 }
                             }
                         }
                     },
                     "401": {
-                        "description": "Unauthorized"
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorUnauthorized"
+                                }
+                            }
+                        }
                     },
                     "422": {
-                        "description": "Validation Error"
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorValidationUser"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -1377,6 +1831,595 @@
                     }
                 },
                 "type": "object"
+            },
+            "Category": {
+                "title": "Category",
+                "description": "Category model representation",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Electronics"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "electronics"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-11-17T12:00:00.000000Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-11-17T12:00:00.000000Z"
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": null,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "ProductImage": {
+                "title": "Product Image",
+                "description": "Product Image model representation",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "product_id": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "image_url": {
+                        "type": "string",
+                        "example": "https://example.com/images/product1.jpg"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-11-17T12:00:00.000000Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-11-17T12:00:00.000000Z"
+                    }
+                },
+                "type": "object"
+            },
+            "Product": {
+                "title": "Product",
+                "description": "Product model representation",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Wireless Headphones"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "High quality wireless headphones with noise cancellation."
+                    },
+                    "price": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 99.99
+                    },
+                    "stock_quantity": {
+                        "type": "integer",
+                        "example": 50
+                    },
+                    "metric": {
+                        "type": "string",
+                        "example": "unit"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-11-17T12:00:00.000000Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-11-17T12:00:00.000000Z"
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": null,
+                        "nullable": true
+                    },
+                    "images": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ProductImage"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "CartItem": {
+                "title": "Cart Item",
+                "description": "Cart Item model representation",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "cart_id": {
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "product_id": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "quantity": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "product": {
+                        "$ref": "#/components/schemas/Product"
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorValidationCart": {
+                "title": "Cart Validation Error",
+                "description": "Validation error response for cart endpoints",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "The given data was invalid."
+                    },
+                    "errors": {
+                        "properties": {
+                            "product_id": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "example": "The selected product_id is invalid."
+                                }
+                            },
+                            "quantity": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "example": "The quantity must be at least 1."
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorInternalServer": {
+                "title": "Internal Server Error",
+                "description": "Standard response for 500 Internal Server Error",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Something went wrong."
+                    }
+                },
+                "type": "object"
+            },
+            "SuccessMessage": {
+                "title": "Success Message",
+                "description": "Standard success response with a message",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Operation successful."
+                    }
+                },
+                "type": "object"
+            },
+            "SuccessResource": {
+                "title": "Success Resource",
+                "description": "Standard success response with a resource",
+                "properties": {
+                    "data": {
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "SuccessCollection": {
+                "title": "Success Collection",
+                "description": "Standard success response with a collection",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "type": "object"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "SuccessPaginatedCollection": {
+                "title": "Success Paginated Collection",
+                "description": "Standard success response with a paginated collection",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "type": "object"
+                        }
+                    },
+                    "links": {
+                        "type": "object"
+                    },
+                    "meta": {
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "SuccessCreated": {
+                "title": "Success Created",
+                "description": "Standard success response for 201 Created",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Resource created successfully."
+                    },
+                    "data": {
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "SuccessUpdated": {
+                "title": "Success Updated",
+                "description": "Standard success response for 200 OK (Update)",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Resource updated successfully."
+                    },
+                    "data": {
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "SuccessDeleted": {
+                "title": "Success Deleted",
+                "description": "Standard success response for 200 OK (Delete)",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Resource deleted successfully."
+                    }
+                },
+                "type": "object"
+            },
+            "SuccessAccepted": {
+                "title": "Success Accepted",
+                "description": "Standard success response for 202 Accepted",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Request accepted."
+                    }
+                },
+                "type": "object"
+            },
+            "SuccessNoContent": {
+                "title": "Success No Content",
+                "description": "Standard success response for 204 No Content"
+            },
+            "ErrorBadRequest": {
+                "title": "Bad Request",
+                "description": "Standard response for 400 Bad Request",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Bad Request"
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorMethodNotAllowed": {
+                "title": "Method Not Allowed",
+                "description": "Standard response for 405 Method Not Allowed",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Method Not Allowed"
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorConflict": {
+                "title": "Conflict",
+                "description": "Standard response for 409 Conflict",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Conflict"
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorTooManyRequests": {
+                "title": "Too Many Requests",
+                "description": "Standard response for 429 Too Many Requests",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Too Many Requests"
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorServiceUnavailable": {
+                "title": "Service Unavailable",
+                "description": "Standard response for 503 Service Unavailable",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Service Unavailable"
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorGatewayTimeout": {
+                "title": "Gateway Timeout",
+                "description": "Standard response for 504 Gateway Timeout",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Gateway Timeout"
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorNotImplemented": {
+                "title": "Not Implemented",
+                "description": "Standard response for 501 Not Implemented",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Not Implemented"
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorBadGateway": {
+                "title": "Bad Gateway",
+                "description": "Standard response for 502 Bad Gateway",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Bad Gateway"
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorUnsupportedMediaType": {
+                "title": "Unsupported Media Type",
+                "description": "Standard response for 415 Unsupported Media Type",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Unsupported Media Type"
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorUnprocessableEntity": {
+                "title": "Unprocessable Entity",
+                "description": "Standard response for 422 Unprocessable Entity",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Unprocessable Entity"
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorPreconditionFailed": {
+                "title": "Precondition Failed",
+                "description": "Standard response for 412 Precondition Failed",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Precondition Failed"
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorPayloadTooLarge": {
+                "title": "Payload Too Large",
+                "description": "Standard response for 413 Payload Too Large",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Payload Too Large"
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorUriTooLong": {
+                "title": "URI Too Long",
+                "description": "Standard response for 414 URI Too Long",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "URI Too Long"
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorExpectationFailed": {
+                "title": "Expectation Failed",
+                "description": "Standard response for 417 Expectation Failed",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Expectation Failed"
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorMisdirectedRequest": {
+                "title": "Misdirected Request",
+                "description": "Standard response for 421 Misdirected Request",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Misdirected Request"
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorLocked": {
+                "title": "Locked",
+                "description": "Standard response for 423 Locked",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Locked"
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorFailedDependency": {
+                "title": "Failed Dependency",
+                "description": "Standard response for 424 Failed Dependency",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Failed Dependency"
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorUpgradeRequired": {
+                "title": "Upgrade Required",
+                "description": "Standard response for 426 Upgrade Required",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Upgrade Required"
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorPreconditionRequired": {
+                "title": "Precondition Required",
+                "description": "Standard response for 428 Precondition Required",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Precondition Required"
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorRequestHeaderFieldsTooLarge": {
+                "title": "Request Header Fields Too Large",
+                "description": "Standard response for 431 Request Header Fields Too Large",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Request Header Fields Too Large"
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorUnavailableForLegalReasons": {
+                "title": "Unavailable For Legal Reasons",
+                "description": "Standard response for 451 Unavailable For Legal Reasons",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Unavailable For Legal Reasons"
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorVariantAlsoNegotiates": {
+                "title": "Variant Also Negotiates",
+                "description": "Standard response for 506 Variant Also Negotiates",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Variant Also Negotiates"
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorInsufficientStorage": {
+                "title": "Insufficient Storage",
+                "description": "Standard response for 507 Insufficient Storage",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Insufficient Storage"
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorLoopDetected": {
+                "title": "Loop Detected",
+                "description": "Standard response for 508 Loop Detected",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Loop Detected"
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorNotExtended": {
+                "title": "Not Extended",
+                "description": "Standard response for 510 Not Extended",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Not Extended"
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorNetworkAuthenticationRequired": {
+                "title": "Network Authentication Required",
+                "description": "Standard response for 511 Network Authentication Required",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Network Authentication Required"
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorUnknown": {
+                "title": "Unknown Error",
+                "description": "Standard response for Unknown Error",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Unknown Error"
+                    }
+                },
+                "type": "object"
             }
         },
         "securitySchemes": {
@@ -1396,6 +2439,14 @@
         {
             "name": "Auth",
             "description": "Auth"
+        },
+        {
+            "name": "Cart",
+            "description": "Cart"
+        },
+        {
+            "name": "Category",
+            "description": "Category"
         },
         {
             "name": "User",

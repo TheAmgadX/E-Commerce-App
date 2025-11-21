@@ -163,11 +163,13 @@ class AuthController extends Controller
      * @OA\Response(
      * response=200, 
      * description="Successfully logged out",
-     * @OA\JsonContent(
-     * @OA\Property(property="message", type="string", example="Successfully logged out")
-     * )
+     * @OA\JsonContent(ref="#/components/schemas/SuccessMessage")
      * ),
-     * @OA\Response(response=401, description="Unauthenticated / Missing Token")
+     * @OA\Response(
+     * response=401,
+     * description="Unauthenticated / Missing Token",
+     * @OA\JsonContent(ref="#/components/schemas/ErrorUnauthorized")
+     * )
      * )
      */
     public function logout(Request $request){
@@ -200,7 +202,18 @@ class AuthController extends Controller
      * @OA\Property(property="message", type="string", example="OTP sent to your email.")
      * )
      * ),
-     * @OA\Response(response=404, description="User not found")
+     * @OA\Response(
+     * response=404,
+     * description="User not found",
+     * @OA\JsonContent(ref="#/components/schemas/ErrorNotFound")
+     * ),
+     * @OA\Response(
+     * response=500,
+     * description="Internal Server Error (Mail Sending Failed)",
+     * @OA\JsonContent(
+     * @OA\Property(property="message", type="string", example="Failed to send OTP. Please try again later.")
+     * )
+     * )
      * )
      * 
      * @param Request $request
@@ -254,7 +267,11 @@ class AuthController extends Controller
      * @OA\Property(property="token", type="string", example="1|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
      * )
      * ),
-     * @OA\Response(response=400, description="Invalid or Expired OTP")
+     * @OA\Response(
+     * response=400,
+     * description="Invalid or Expired OTP",
+     * @OA\JsonContent(ref="#/components/schemas/ErrorBadRequest")
+     * )
      * )
      * 
      * @param Request $request

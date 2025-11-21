@@ -73,9 +73,7 @@ class AddressController extends Controller
      * @OA\Response(
      * response=201,
      * description="Address created successfully",
-     * @OA\JsonContent(
-     * @OA\Property(property="message", type="string", example="Address created successfully"),
-     * )
+     * @OA\JsonContent(ref="#/components/schemas/SuccessCreated")
      * ),
      * @OA\Response(
      * response=401,
@@ -145,10 +143,7 @@ class AddressController extends Controller
      * @OA\Response(
      * response=200,
      * description="Address updated successfully",
-     * @OA\JsonContent(
-     * @OA\Property(property="message", type="string", example="Address updated successfully"),
-     * @OA\Property(property="address", ref="#/components/schemas/Address")
-     * )
+     * @OA\JsonContent(ref="#/components/schemas/SuccessUpdated")
      * ),
      * @OA\Response(
      * response=401,
@@ -157,8 +152,10 @@ class AddressController extends Controller
      * ),
      * @OA\Response(
      * response=403,
-     * description="Forbidden (if the address does not belong to the user)",
-     * @OA\JsonContent(ref="#/components/schemas/ErrorForbidden")
+     * description="Forbidden - You do not have permission to update this address",
+     * @OA\JsonContent(
+     * @OA\Property(property="message", type="string", example="You do not have permission to update this address.")
+     * )
      * ),
      * @OA\Response(
      * response=404,
@@ -215,9 +212,7 @@ class AddressController extends Controller
      * @OA\Response(
      * response=200,
      * description="Address deleted successfully",
-     * @OA\JsonContent(
-     * @OA\Property(property="message", type="string", example="Address deleted successfully")
-     * )
+     * @OA\JsonContent(ref="#/components/schemas/SuccessDeleted")
      * ),
      * @OA\Response(
      * response=401,
@@ -226,8 +221,10 @@ class AddressController extends Controller
      * ),
      * @OA\Response(
      * response=403,
-     * description="Forbidden (if the address does not belong to the user)",
-     * @OA\JsonContent(ref="#/components/schemas/ErrorForbidden")
+     * description="Forbidden - You do not have permission to delete this address",
+     * @OA\JsonContent(
+     * @OA\Property(property="message", type="string", example="You do not have permission to delete this address.")
+     * )
      * ),
      * @OA\Response(
      * response=404,
