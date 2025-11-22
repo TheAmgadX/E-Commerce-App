@@ -21,6 +21,13 @@ class Product extends Model
         'metric',
     ];
 
+    protected $hidden = [
+        'stock_quantity',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
+
     protected $casts = [
         'metric' => ProductMetric::class,
     ];

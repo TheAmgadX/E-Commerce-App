@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
+use App\Services\OrderServices;
 /**
  * @OA\Tag(
  * name="Orders",
@@ -40,10 +41,7 @@ class OrderController extends Controller
     public function getOrders() {
         $user = Auth::user();
         
-        $orders = Order::where('user_id', $user->id)
-            ->with(['address', 'products.images'])
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $orders = OrderServices::getOrders($user);
 
         return response()->json([
             'message' => 'Orders retrieved successfully',
@@ -99,69 +97,8 @@ class OrderController extends Controller
         ]);
 
         $user = Auth::user();
-        $cart = $user->cart;
 
-        if (!$cart || $cart->items->isEmpty()) {
-            return response()->json([
-                'message' => 'Cart is empty. Cannot create order.'
-            ], 400);
-        }
-
-        // Verify the address belongs to the user
-        $address = $user->addresses()->find($request->address_id);
-        if (!$address) {
-            return response()->json([
-                'message' => 'Address not found'
-            ], 404);
-        }
-
-        DB::beginTransaction();
-        
-        try {
-            // Calculate total amount
-            $totalAmount = 0;
-            foreach ($cart->items as $item) {
-                $totalAmount += $item->product->price * $item->quantity;
-            }
-
-            // Create the order
-            $order = Order::create([
-                'user_id' => $user->id,
-                'address_id' => $request->address_id,
-                'total_amount' => $totalAmount,
-                'status' => OrderStatus::Pending,
-            ]);
-
-            // Create order items from cart items
-            foreach ($cart->items as $cartItem) {
-                OrderItem::create([
-                    'order_id' => $order->id,
-                    'product_id' => $cartItem->product_id,
-                    'quantity' => $cartItem->quantity,
-                ]);
-            }
-
-            // Clear the cart
-            $cart->items()->delete();
-
-            DB::commit();
-            
-            // Load relationships for response
-            $order->load(['address', 'products.images']);
-
-            return response()->json([
-                'message' => 'Order created successfully',
-                'data' => $order
-            ], 201);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            
-            return response()->json([
-                'message' => 'Order creation failed',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-        
+        return OrderServices::createOrder($user, $request->address_id);
     }
 
     /**
@@ -216,53 +153,7 @@ class OrderController extends Controller
             ], 403);
         }
 
-        if ($order->status !== OrderStatus::Pending) {
-            return response()->json([
-                'message' => 'Order cannot be updated as it is no longer pending'
-            ], 400);
-        }
-
-        $productId   = (int) $data['product_id'];
-        $newQuantity = (int) $data['quantity'];
-
-        $orderProduct = $order->products()->where('products.id', $productId)->first();
-
-        if (!$orderProduct) {
-            return response()->json([
-                'message' => 'Product not found in this order'
-            ], 404);
-        }
-
-        DB::beginTransaction();
-
-        try {
-            // calculate the new total_amount for the order and update the values.
-            $oldQuantity = $orderProduct->pivot->quantity;
-            
-            $oldPrice = $orderProduct->price * $oldQuantity;
-
-            $order->total_amount -= $oldPrice;
-
-            $newPrice = $orderProduct->price * $newQuantity;
-
-            $order->total_amount += $newPrice;
-            
-            $order->products()->updateExistingPivot($productId, ['quantity' => $newQuantity]);
-            
-            $order->save();
-            
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'message' => 'Product quantity update failed',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-
-        return response()->json([
-            'message' => 'Product quantity updated successfully'
-        ], 200);
+        return OrderServices::updateOrderProduct($order, $data);
     }
 
     /**
@@ -308,6 +199,7 @@ class OrderController extends Controller
         ]);
 
         $productId = $data['product_id'];
+        $data['quantity'] = 0;
 
         $user = Auth::user();
 
@@ -317,47 +209,7 @@ class OrderController extends Controller
             ], 403);
         }
 
-        if ($order->status !== OrderStatus::Pending) {
-            return response()->json([
-                'message' => 'Order cannot be updated as it is no longer pending'
-            ], 400);
-        }
-
-        if (!$order->products()->where('product_id', $productId)->exists()) {
-            return response()->json([
-                'message' => 'Product not found in this order'
-            ], 404);
-        }
-
-        $orderProduct = $order->products()->where('product_id', $productId)->first();
-
-        DB::beginTransaction();
-        
-        try {
-            $removedProductPrice = $orderProduct->price * $orderProduct->pivot->quantity;
-            $order->total_amount -= $removedProductPrice;
-
-            $order->products()->detach($productId);
-
-            if ($order->products()->count() === 0) {
-                $order->status = OrderStatus::Cancelled;
-            }
-
-            $order->save();
-
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'message' => 'Product removal failed',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-
-
-        return response()->json([
-            'message' => 'Product removed successfully'
-        ], 200);
+        return OrderServices::updateOrderProduct($order, $data);
     }
 
     /**
@@ -388,19 +240,6 @@ class OrderController extends Controller
             ], 403);
         }
 
-        $order->status = OrderStatus::Cancelled;
-
-        try{
-            $order->save();
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Order cancellation failed',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-
-        return response()->json([
-            'message' => 'Order cancelled successfully'
-        ], 200);
+        return OrderServices::cancelOrder($order);
     }
 }
