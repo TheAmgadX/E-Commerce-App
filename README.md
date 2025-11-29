@@ -66,8 +66,8 @@ Follow these steps to set up the project locally.
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
-cd <repository-directory>
+git clone <https://github.com/TheAmgadX/E-Commerce-App>
+cd <E-Commerce-App>
 ```
 
 ### 2. Install Dependencies
@@ -171,16 +171,6 @@ You can test all endpoints directly from the browser using the Swagger UI.
 1.  Use the **Login** endpoint to get a Bearer Token.
 2.  Click **Authorize** at the top of the docs and paste the token: `Bearer <your-token>`
 3.  Now you can test protected routes like `POST /api/orders`.
-
----
-
-## 🧪 Testing
-
-The application includes Feature tests for core API functionality.
-
-```bash
-php artisan test
-```
 
 ---
 
