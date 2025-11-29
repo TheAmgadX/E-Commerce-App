@@ -1,59 +1,204 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🛒 Laravel E-Commerce API & Admin Dashboard
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A robust, dual-interface E-Commerce application built with Laravel.  
+It features a secure RESTful API for customer applications (Mobile/Frontend) and a modern MVC Admin Dashboard for store management.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🚀 Features
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 📱 Customer API (RESTful)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Built for mobile and frontend consumption, secured with Laravel Sanctum.
 
-## Learning Laravel
+-   **Authentication**
+    -   Register, Login, Logout
+    -   Password Reset (OTP via Email)
+-   **Profile**
+    -   Manage personal info, Change password, Manage address book
+-   **Products**
+    -   Advanced filtering: Category, Price Range, Search
+    -   View product details
+-   **Shopping Cart**
+    -   Add to cart, Update quantities, Remove items
+-   **Orders**
+    -   Place orders (COD), View order history, Cancel pending orders
+-   **Documentation**
+    -   Full interactive API docs using Swagger/OpenAPI
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### 💻 Admin Dashboard (MVC)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+A responsive, SaaS-style control panel built with Blade, Tailwind CSS, and Alpine.js.
 
-## Laravel Sponsors
+-   **Dashboard**
+    -   Real-time statistics: Revenue, Total Orders, Active Users
+    -   Recent activity
+-   **Role-Based Access Control**
+    -   **Super Admin:** Full access + User Management (Promote/Demote admins, Toggle Activation)
+    -   **Admin:** Manage catalog and orders
+-   **Catalog Management**
+    -   Full CRUD for Products (with image upload)
+    -   Manage Categories
+-   **Order Management**
+    -   View order details
+    -   Update status: Pending → Shipped → Delivered
+    -   Automatic email notifications to customers on status changes
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+## 🛠️ Tech Stack
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+-   **Framework:** Laravel 12 (Latest)
+-   **Database:** MySQL
+-   **Frontend (Admin):** Blade Templates, Tailwind CSS (v4), Alpine.js, Vite
+-   **API Auth:** Laravel Sanctum
+-   **Permissions:** Spatie Laravel Permission
+-   **Documentation:** L5-Swagger (OpenAPI)
+-   **Mail:** SMTP (Gmail/Mailtrap) with Markdown Mailables
+-   **Queue:** Database Queue
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## ⚙️ Installation
 
-## Code of Conduct
+Follow these steps to set up the project locally.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 1. Clone the Repository
 
-## Security Vulnerabilities
+```bash
+git clone <repository-url>
+cd <repository-directory>
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 2. Install Dependencies
 
-## License
+```bash
+# Backend dependencies
+composer install
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+# Frontend dependencies
+npm install
+npm run build
+```
+
+### 3. Environment Setup
+
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+Open `.env` and configure your Database and Email settings:
+
+```env
+DB_DATABASE=e_commerce_app
+DB_USERNAME=root
+DB_PASSWORD=
+
+# Mail Configuration (Required for OTP & Notifications)
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=465
+MAIL_USERNAME=your-email@gmail.com
+MAIL_PASSWORD=your-app-password
+MAIL_ENCRYPTION=ssl
+```
+
+### 4. Database Setup & Seeding
+
+This command will create all tables and populate them with dummy data (Products, Categories, Users).
+
+```bash
+php artisan migrate:fresh --seed
+```
+
+> **Note:** The seeder automatically creates a Super Admin, Admin, and dummy Customers.
+
+### 5. Generate API Documentation
+
+```bash
+php artisan l5-swagger:generate
+```
+
+### 6. Storage Link
+
+Link the public storage folder to serve product images.
+
+```bash
+php artisan storage:link
+```
+
+### 7. Run the Application
+
+You can use the convenience script to run everything (Server, Queue, Vite, Logs) in one terminal:
+
+```bash
+composer run dev
+```
+
+**Or** run them separately in different terminals:
+
+```bash
+# Terminal 1: Server
+php artisan serve
+
+# Terminal 2: Queue Worker
+php artisan queue:work
+
+# Terminal 3: Vite (for assets)
+npm run dev
+```
+
+---
+
+## 📖 Usage
+
+### Admin Dashboard
+
+Visit: `http://127.0.0.1:8000/login`
+
+**Default Credentials (from Seeder):**
+
+-   **Super Admin:** `admin@example.com` / `password`
+-   **Admin:** Check the `users` table for generated admin email / `password`
+
+### API Documentation
+
+Visit: `http://127.0.0.1:8000/api/documentation`
+
+You can test all endpoints directly from the browser using the Swagger UI.
+
+1.  Use the **Login** endpoint to get a Bearer Token.
+2.  Click **Authorize** at the top of the docs and paste the token: `Bearer <your-token>`
+3.  Now you can test protected routes like `POST /api/orders`.
+
+---
+
+## 🧪 Testing
+
+The application includes Feature tests for core API functionality.
+
+```bash
+php artisan test
+```
+
+---
+
+## 📂 Project Structure
+
+```
+app/Http/Controllers/Api       # RESTful controllers for the customer app
+app/Http/Controllers/Admin     # MVC controllers for the dashboard
+app/Services                   # Business logic layer
+app/Models                     # Eloquent models
+resources/views/admin          # Blade templates for the dashboard
+```
+
+---
+
+## 🛡️ Security
+
+-   **Sanctum:** Token-based authentication for API
+-   **Spatie Permissions:** Role-based middleware protects admin routes
+-   **Validation:** Strict FormRequests and Controller validation rules
+-   **Transaction Safety:** DB Transactions used for critical operations
